@@ -8,7 +8,7 @@ use bodge::{
 use lazy_static::lazy_static;
 
 use crate::{
-    util::{PointListBuilder, Stepper},
+    util::{PointListBuilder, Stepper, StepperConfig},
     AppScene,
 };
 
@@ -94,7 +94,7 @@ fn setup(mut commands: Commands) {
 
 #[derive(Default)]
 struct Draw {
-    step: i32,
+    stepper_config: StepperConfig,
 }
 
 fn draw(
@@ -110,21 +110,21 @@ fn draw(
 
     point_list_builder.draw(debug_draw.as_mut());
 
-    let mut stepper = Stepper::new(local.step);
+    let mut stepper = local.stepper_config.begin();
     let triangles = visual_bowyer_watson(
         point_list_builder.vertices(),
         &mut stepper,
         debug_draw.as_mut(),
     );
 
-    if stepper.show() {
+    if stepper.show_step() || !stepper.is_enabled() {
         for triangle in triangles.iter() {
             triangle.draw(debug_draw.as_mut(), *STYLE_TRIANGLE);
         }
     }
 
     egui::Window::new("Algorithm Step").show(egui_context.ctx_mut(), |ui| {
-        Stepper::ui(ui, &mut local.step, stepper.last_step());
+        local.stepper_config.ui(ui, stepper.last_step());
     });
 }
 
@@ -161,7 +161,7 @@ fn visual_bowyer_watson(
 
     let mut triangulation = vec![super_triangle];
 
-    if stepper.show() {
+    if stepper.show_step() {
         for triangle in triangulation.iter() {
             triangle.draw(
                 debug_draw,
@@ -176,7 +176,7 @@ fn visual_bowyer_watson(
             let circumcircle = triangle.circumcircle().unwrap();
             if circumcircle.contains_point(*point) {
                 bad_triangles.push(triangle_index);
-                if stepper.show() {
+                if stepper.show_step() {
                     Circle::new(triangle.a(), 15.)
                         .draw(debug_draw, *STYLE_ALGORITHM_TRIANGLE_CURRENT_VERTEX);
                     Circle::new(triangle.b(), 15.)
@@ -217,7 +217,7 @@ fn visual_bowyer_watson(
                     }
                 }
             }
-            if stepper.show() {
+            if stepper.show_step() {
                 Circle::new(*point, 15.).draw(debug_draw, *STYLE_ALGORITHM_POINT_CURRENT_BAD);
                 for other_triangle in triangulation.iter() {
                     other_triangle.draw(debug_draw, *STYLE_ALGORITHM_TRIANGLE);
@@ -243,7 +243,7 @@ fn visual_bowyer_watson(
         }
     }
 
-    if stepper.show() {
+    if stepper.show_step() {
         for triangle in triangulation.iter() {
             let mut remove = false;
             for vertex in triangle.vertices.iter() {

@@ -1,42 +1,83 @@
 use bevy_egui::egui::Ui;
 
+#[derive(Default, Copy, Clone, Debug)]
+pub struct StepperConfig {
+    pub step: i32,
+    pub show: bool,
+}
+
+impl StepperConfig {
+    pub fn begin(&self) -> Stepper {
+        if self.show {
+            Stepper::new(self.step)
+        } else {
+            Stepper::new_disabled()
+        }
+    }
+
+    pub fn ui(&mut self, ui: &mut Ui, last_step: i32) {
+        ui.label("Steps");
+        ui.checkbox(&mut self.show, "Show");
+        if self.show {
+            ui.horizontal(|ui| {
+                if ui.button("<<").clicked() {
+                    self.step = 0;
+                }
+                if ui.button("-").clicked() {
+                    self.step -= 1;
+                }
+                if ui.button("+").clicked() {
+                    self.step += 1;
+                }
+                if ui.button(">>").clicked() {
+                    self.step = last_step;
+                }
+                self.step = self.step.clamp(0, last_step);
+                ui.label(format!("{}", self.step));
+            });
+        }
+    }
+}
+
 #[derive(Copy, Clone, Debug)]
-pub struct Stepper {
-    current_step: i32,
-    target_step: i32,
+pub enum Stepper {
+    Enabled { current_step: i32, target_step: i32 },
+    Disabled,
 }
 
 impl Stepper {
     pub fn new(step: i32) -> Stepper {
-        Stepper {
+        Stepper::Enabled {
             current_step: 0,
             target_step: step,
         }
     }
 
-    pub fn ui(ui: &mut Ui, step: &mut i32, last_step: i32) {
-        ui.label("Step");
-        ui.horizontal(|ui| {
-            if ui.button("0").clicked() {
-                *step = 0;
-            }
-            if ui.button("-").clicked() {
-                *step -= 1;
-            }
-            if ui.button("+").clicked() {
-                *step += 1;
-            }
-            *step = (*step).clamp(0, last_step);
-            ui.label(format!("{}", *step));
-        });
+    pub fn new_disabled() -> Stepper {
+        Stepper::Disabled
     }
 
-    pub fn show(&mut self) -> bool {
-        self.current_step += 1;
-        self.target_step == self.current_step
+    pub fn show_step(&mut self) -> bool {
+        match self {
+            Stepper::Enabled {
+                current_step,
+                target_step,
+            } => {
+                *current_step += 1;
+                *target_step == *current_step
+            }
+            Stepper::Disabled => false,
+        }
+    }
+
+    pub fn is_enabled(&self) -> bool {
+        matches!(*self, Stepper::Enabled { .. })
     }
 
     pub fn last_step(&self) -> i32 {
-        self.current_step
+        match self {
+            Stepper::Enabled { current_step, .. } => *current_step,
+            Stepper::Disabled => 0,
+        }
     }
 }
