@@ -81,6 +81,10 @@ impl PolygonBuilder {
         &self.vertices
     }
 
+    pub fn vertices_mut(&mut self) -> &mut Vec<Vec2> {
+        &mut self.vertices
+    }
+
     pub fn draw(&self, debug_draw: &mut DebugDraw) {
         self.draw_vertices(debug_draw);
         self.draw_edges(debug_draw);

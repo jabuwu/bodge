@@ -28,11 +28,11 @@ fn setup(mut commands: Commands) {
 fn draw(
     mut egui_context: ResMut<EguiContext>,
     mut debug_draw: ResMut<DebugDraw>,
+    mut polygon_builder_query: Query<&mut PolygonBuilder>,
     label_query: Query<(Entity, &Label)>,
-    polygon_builder_query: Query<&PolygonBuilder>,
 ) {
-    let polygon_builder = polygon_builder_query
-        .get(Label::find(&label_query, "polygon_builder"))
+    let mut polygon_builder = polygon_builder_query
+        .get_mut(Label::find(&label_query, "polygon_builder"))
         .unwrap();
 
     polygon_builder.draw(debug_draw.as_mut());
@@ -75,5 +75,14 @@ fn draw(
 
     egui::Window::new("Debug").show(egui_context.ctx_mut(), |ui| {
         ui.label(format!("Is Clockwise: {}", is_clockwise));
+        if ui.button("Reverse").clicked() {
+            let reversed_vertices: Vec<Vec2> = polygon_builder
+                .vertices()
+                .iter()
+                .map(|vec| *vec)
+                .rev()
+                .collect();
+            *polygon_builder.vertices_mut() = reversed_vertices;
+        }
     });
 }
