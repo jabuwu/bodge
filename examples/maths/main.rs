@@ -42,6 +42,7 @@ fn main() {
         .add_startup_system(setup)
         .add_system_set(SystemSet::on_update(AppScene::Menu).with_system(menu_update))
         .add_system(menu_on_escape)
+        .add_system(window_title)
         .run();
 }
 
@@ -79,6 +80,11 @@ fn menu_on_escape(mut app_scene: ResMut<State<AppScene>>, mut keys: ResMut<Input
         keys.reset(KeyCode::Space);
         let _ = app_scene.set(AppScene::Menu);
     }
+}
+
+fn window_title(mut windows: ResMut<Windows>, app_scene: Res<State<AppScene>>) {
+    let window = windows.primary_mut();
+    window.set_title(format!("{:?}", app_scene.current()));
 }
 
 mod polygon_is_clockwise;
