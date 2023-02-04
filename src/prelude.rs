@@ -1,1 +1,4 @@
-pub use crate::bevy::{AddScenes, DebugDrawable};
+pub use crate::{
+    bevy::{AddScenes, DebugDrawable},
+    collision::Colliding,
+};

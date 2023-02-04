@@ -20,6 +20,8 @@ enum AppScene {
     TriangulationBowyerWatson,
 
     PolygonIsClockwise,
+
+    Colliding,
 }
 
 fn main() {
@@ -38,6 +40,7 @@ fn main() {
         .add_plugin(triangle_incenter::Plugin)
         .add_plugin(triangulation_bowyer_watson::Plugin)
         .add_plugin(polygon_is_clockwise::Plugin)
+        .add_plugin(colliding::Plugin)
         .add_scenes::<AppScene>()
         .add_startup_system(setup)
         .add_system_set(SystemSet::on_update(AppScene::Menu).with_system(menu_update))
@@ -87,6 +90,7 @@ fn window_title(mut windows: ResMut<Windows>, app_scene: Res<State<AppScene>>) {
     window.set_title(format!("{:?}", app_scene.current()));
 }
 
+mod colliding;
 mod polygon_is_clockwise;
 mod triangle_centroid;
 mod triangle_circumcenter;
