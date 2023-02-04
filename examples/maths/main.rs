@@ -18,6 +18,7 @@ enum AppScene {
     TriangleIncenter,
 
     TriangulationBowyerWatson,
+    TriangulationEarClipping,
 
     PolygonIsClockwise,
 
@@ -39,6 +40,7 @@ fn main() {
         .add_plugin(triangle_circumcenter::Plugin)
         .add_plugin(triangle_incenter::Plugin)
         .add_plugin(triangulation_bowyer_watson::Plugin)
+        .add_plugin(triangulation_ear_clipping::Plugin)
         .add_plugin(polygon_is_clockwise::Plugin)
         .add_plugin(colliding::Plugin)
         .add_scenes::<AppScene>()
@@ -96,4 +98,5 @@ mod triangle_centroid;
 mod triangle_circumcenter;
 mod triangle_incenter;
 mod triangulation_bowyer_watson;
+mod triangulation_ear_clipping;
 mod util;

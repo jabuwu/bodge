@@ -1,4 +1,4 @@
-use glam::Vec2;
+use glam::{Mat3, Vec2};
 
 use super::{Circle, Line2, LineSegment2};
 
@@ -173,5 +173,16 @@ impl Triangle2 {
         let has_neg = (d1 < 0.) || (d2 < 0.) || (d3 < 0.);
         let has_pos = (d1 > 0.) || (d2 > 0.) || (d3 > 0.);
         !(has_neg && has_pos)
+    }
+
+    pub fn is_clockwise(&self) -> bool {
+        // TODO: simplify this function
+        Mat3 {
+            x_axis: self.a().extend(1.),
+            y_axis: self.b().extend(1.),
+            z_axis: self.c().extend(1.),
+        }
+        .determinant()
+            < 0.
     }
 }
