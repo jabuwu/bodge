@@ -39,6 +39,7 @@ impl LineSegment2 {
     }
 
     pub fn closest_point(&self, point: Vec2) -> Vec2 {
+        bodge_assert!(point.is_finite());
         let ab = self.end - self.start;
         let t = ((point - self.start).dot(ab) / ab.dot(ab)).clamp(0., 1.);
         self.start + t * ab

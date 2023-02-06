@@ -23,6 +23,8 @@ enum AppScene {
     PolygonIsClockwise,
 
     Colliding,
+
+    PolylineSimplification,
 }
 
 fn main() {
@@ -43,6 +45,7 @@ fn main() {
         .add_plugin(triangulation_ear_clipping::Plugin)
         .add_plugin(polygon_is_clockwise::Plugin)
         .add_plugin(colliding::Plugin)
+        .add_plugin(polyline_simplification::Plugin)
         .add_scenes::<AppScene>()
         .add_startup_system(setup)
         .add_system_set(SystemSet::on_update(AppScene::Menu).with_system(menu_update))
@@ -94,6 +97,7 @@ fn window_title(mut windows: ResMut<Windows>, app_scene: Res<State<AppScene>>) {
 
 mod colliding;
 mod polygon_is_clockwise;
+mod polyline_simplification;
 mod triangle_centroid;
 mod triangle_circumcenter;
 mod triangle_incenter;

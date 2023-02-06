@@ -2,7 +2,7 @@ use std::f32::consts::TAU;
 
 use bevy::prelude::*;
 
-use crate::geometry::{Circle, Line2, LineRay2, LineSegment2, Triangle2};
+use crate::geometry::{Circle, Line2, LineRay2, LineSegment2, Polyline, Triangle2};
 
 use super::{draw::DebugDrawMesh, DebugDraw, DebugDrawStyle, DebugDrawVertex};
 
@@ -143,5 +143,19 @@ impl DebugDrawable for Triangle2 {
                 depth: style.depth,
             }
         }
+    }
+}
+
+impl DebugDrawable for Polyline {
+    fn to_mesh(&self, style: DebugDrawStyle) -> DebugDrawMesh {
+        if !style.visible {
+            return DebugDrawMesh::new();
+        }
+        let mut lines = DebugDrawMesh::new();
+        lines.depth = style.depth;
+        for line_segment in self.line_segments().iter() {
+            lines.merge_with(&line_segment.to_mesh(style));
+        }
+        lines
     }
 }

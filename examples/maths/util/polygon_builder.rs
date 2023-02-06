@@ -60,6 +60,7 @@ pub struct PolygonBuilder {
     vertices: Vec<Vec2>,
     drag_index: Option<usize>,
     closest: Option<Closest>,
+    polyline: bool,
 }
 
 impl Default for PolygonBuilder {
@@ -72,11 +73,19 @@ impl Default for PolygonBuilder {
             ],
             drag_index: None,
             closest: None,
+            polyline: false,
         }
     }
 }
 
 impl PolygonBuilder {
+    pub fn as_polyline(self) -> PolygonBuilder {
+        PolygonBuilder {
+            polyline: true,
+            ..self
+        }
+    }
+
     pub fn vertices(&self) -> &Vec<Vec2> {
         &self.vertices
     }
@@ -111,6 +120,9 @@ impl PolygonBuilder {
 
     pub fn draw_edges(&self, debug_draw: &mut DebugDraw) {
         for vertex_index in 0..self.vertices().len() {
+            if self.polyline && vertex_index == self.vertices.len() - 1 {
+                break;
+            }
             let next_vertex_index = (vertex_index + 1) % self.vertices.len();
             LineSegment2::new(
                 self.vertices()[vertex_index],
@@ -163,6 +175,11 @@ fn polygon_builder_update(
             }
             if closest.is_none() {
                 for vertex_index in 0..polygon_builder.vertices.len() {
+                    if polygon_builder.polyline
+                        && vertex_index == polygon_builder.vertices.len() - 1
+                    {
+                        break;
+                    }
                     let next_vertex_index = (vertex_index + 1) % polygon_builder.vertices.len();
                     let edge = LineSegment2::new(
                         polygon_builder.vertices[vertex_index],
