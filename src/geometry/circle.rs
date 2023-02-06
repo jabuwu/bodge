@@ -21,6 +21,14 @@ impl Circle {
         circle
     }
 
+    pub fn closest_point(&self, point: Vec2) -> Vec2 {
+        if self.contains_point(point) {
+            point
+        } else {
+            self.center + (point - self.center).normalize() * self.radius * 0.5
+        }
+    }
+
     pub fn contains_point(&self, point: Vec2) -> bool {
         circle_validity_check!(self);
         self.center.distance(point) <= self.radius * 0.5

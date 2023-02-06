@@ -2,7 +2,7 @@ use std::f32::consts::TAU;
 
 use bevy::prelude::*;
 
-use crate::geometry::{Circle, Line2, LineRay2, LineSegment2, Polyline, Triangle2};
+use crate::geometry::{Aabb, Circle, Line2, LineRay2, LineSegment2, Polyline, Triangle2};
 
 use super::{draw::DebugDrawMesh, DebugDraw, DebugDrawStyle, DebugDrawVertex};
 
@@ -14,6 +14,36 @@ pub trait DebugDrawable {
     }
 
     fn to_mesh(&self, style: DebugDrawStyle) -> DebugDrawMesh;
+}
+
+impl DebugDrawable for Aabb {
+    fn to_mesh(&self, style: DebugDrawStyle) -> DebugDrawMesh {
+        if !style.visible {
+            return DebugDrawMesh::new();
+        }
+        DebugDrawMesh {
+            vertices: vec![
+                DebugDrawVertex {
+                    position: self.position + self.size * Vec2::new(0.5, 0.5),
+                    color: style.color,
+                },
+                DebugDrawVertex {
+                    position: self.position + self.size * Vec2::new(-0.5, 0.5),
+                    color: style.color,
+                },
+                DebugDrawVertex {
+                    position: self.position + self.size * Vec2::new(0.5, -0.5),
+                    color: style.color,
+                },
+                DebugDrawVertex {
+                    position: self.position + self.size * Vec2::new(-0.5, -0.5),
+                    color: style.color,
+                },
+            ],
+            indices: vec![0, 1, 2, 3, 2, 1],
+            depth: style.depth,
+        }
+    }
 }
 
 impl DebugDrawable for Circle {

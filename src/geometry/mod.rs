@@ -1,3 +1,4 @@
+mod aabb;
 mod circle;
 mod line;
 mod line_ray;
@@ -6,6 +7,7 @@ mod polyline;
 mod triangle;
 mod vertex_list;
 
+pub use aabb::*;
 pub use circle::*;
 pub use line::*;
 pub use line_ray::*;
