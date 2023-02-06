@@ -19,14 +19,14 @@ lazy_static! {
         color: Color::RED,
         thickness: 3.,
         outline: true,
-        depth: 1.,
+        depth: 2.,
         ..Default::default()
     };
     static ref STYLE_TRIANGLE: DebugDrawStyle = DebugDrawStyle {
         color: Color::LIME_GREEN,
         thickness: 2.,
         outline: true,
-        depth: 0.,
+        depth: 1.,
         ..Default::default()
     };
     static ref STYLE_ALGORITHM_EAR_CANDIDATE_ACCEPTED: DebugDrawStyle = DebugDrawStyle {
@@ -75,8 +75,7 @@ fn draw(
         .get(Label::find(&label_query, "polygon_builder"))
         .unwrap();
 
-    polygon_builder.draw_vertices(debug_draw.as_mut());
-    polygon_builder.draw_closest(debug_draw.as_mut());
+    polygon_builder.draw(debug_draw.as_mut());
 
     let vertex_list = VertexList2(polygon_builder.vertices().clone());
     if !vertex_list.is_simple_polygon() {
